@@ -1,0 +1,23 @@
+{
+    "name": "filipepaladino/laravel-correio",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Filipe",
+            "email": "contato@filipepaladino.com.br"
+        }
+    ],
+
+    "minimum-stability": "dev",
+
+    "require": {
+        "php": ">=5.4.0"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Paladino\\Correio\\": "src/"
+        }
+    }
+
+}
