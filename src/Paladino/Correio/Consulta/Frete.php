@@ -21,26 +21,43 @@ class Frete extends Configuracao
     private function getData()
     {
 
-        $config = Config::get('host');
+        try{
 
-        $soap = new \SoapClient($config['calcula-frete'], [
-            'trace'              => true,
-            'exceptions'         => true,
-            'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 1000
-        ]);
+            $config = Config::get('host');
 
-        $CalcPrecoPrazoData = $soap->CalcPrecoPrazoData($this->getConfiguracao());
-        $data               = $CalcPrecoPrazoData->CalcPrecoPrazoDataResult->Servicos->cServico;
-        $resultado          = [];
+            $resultado          = [];
+            $data               = [];
 
-        if(!is_array($data)){
-            $resultado[] = (array)$data;
-        } else {
-            $resultado    = $data;
+
+            if(class_exists('SoapClient')){
+                $soap = new \SoapClient($config['calcula-frete'], [
+                    'trace'              => true,
+                    'exceptions'         => true,
+                    'compression'        => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+                    'connection_timeout' => 1000
+                ]);
+
+                $CalcPrecoPrazoData = $soap->CalcPrecoPrazoData($this->getConfiguracao());
+                $data               = $CalcPrecoPrazoData->CalcPrecoPrazoDataResult->Servicos->cServico;
+
+                if(!is_array($data)){
+                    $resultado[] = (array)$data;
+                } else {
+                    $resultado    = $data;
+                }
+
+                return $this->trataData($resultado);
+            }
+
+            return "A classe 'SoapClient' não existe. Verifique se ela encontra-se habilitada.";
+
+        }catch (Exception $e){
+
+            return [];
+
         }
 
-        return $this->trataData($resultado);
+
     }
 
     private function trataData($resultado)
